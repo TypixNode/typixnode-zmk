@@ -21,7 +21,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc fonts-noto-cjk fonts-noto-color-emoji weasyprint
+          sudo apt-get install -y pandoc fonts-noto-cjk fonts-noto-color-emoji fonts-dejavu-core weasyprint
+          # Install Sarasa Gothic (true CJK monospace with box-drawing alignment)
+          mkdir -p ~/.local/share/fonts
+          curl -sL https://github.com/be5invis/Sarasa-Gothic/releases/download/v1.0.26/SarasaFixed-TTF-1.0.26.7z -o /tmp/sarasa.7z
+          sudo apt-get install -y p7zip-full
+          7z x /tmp/sarasa.7z -o/tmp/sarasa
+          cp /tmp/sarasa/SarasaFixedSC-Regular.ttf ~/.local/share/fonts/
+          cp /tmp/sarasa/SarasaFixedSC-Bold.ttf ~/.local/share/fonts/ 2>/dev/null || true
+          fc-cache -fv
 
       - name: Convert MD to PDF
         run: |
