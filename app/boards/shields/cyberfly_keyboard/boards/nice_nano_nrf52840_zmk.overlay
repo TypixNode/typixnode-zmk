@@ -2,8 +2,9 @@
  * Board-specific overlay for CyberFly Keyboard on nice!nano (nRF52840)
  * PWM0: backlight on P0.15
  * PWM1: RGB status LED on P0.14 (R), P0.16 (G), P0.19 (B)
- * I2C0 (TWIM): QMI8658A IMU master (SDA=P0.26, SCL=P1.09)
- * I2C1 (TWIS): CyberFly I2C slave target (SDA=P0.04, SCL=P0.05)
+ * I2C0 (TWIS): CyberFly I2C slave target on Qwiic (SDA=P0.26, SCL=P1.09)
+ * The Qwiic pins are shared with QMI8658A, so this Meshtastic/CardKB
+ * firmware mode disables the IMU/air-mouse bus.
  */
 
 /* Disable the nice_nano on-board LED node to avoid conflict with P0.15 */
@@ -11,51 +12,31 @@
     status = "disabled";
 };
 
-/* I2C0 for QMI8658A IMU (SDA=P0.26, SCL=P1.09) */
+/* I2C0 as TWIS (slave) on the physical Qwiic connector. */
 &pinctrl {
-    i2c0_default: i2c0_default {
+    i2c0_target_default: i2c0_target_default {
         group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 26)>,
-                    <NRF_PSEL(TWIM_SCL, 1, 9)>;
+            psels = <NRF_PSEL(TWIS_SDA, 0, 26)>,
+                    <NRF_PSEL(TWIS_SCL, 1, 9)>;
         };
     };
-    i2c0_sleep: i2c0_sleep {
+    i2c0_target_sleep: i2c0_target_sleep {
         group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 26)>,
-                    <NRF_PSEL(TWIM_SCL, 1, 9)>;
-            low-power-enable;
-        };
-    };
-
-    /* I2C1 as TWIS (slave) for CyberFly external host interface */
-    i2c1_target_default: i2c1_target_default {
-        group1 {
-            psels = <NRF_PSEL(TWIS_SDA, 0, 4)>,
-                    <NRF_PSEL(TWIS_SCL, 0, 5)>;
-        };
-    };
-    i2c1_target_sleep: i2c1_target_sleep {
-        group1 {
-            psels = <NRF_PSEL(TWIS_SDA, 0, 4)>,
-                    <NRF_PSEL(TWIS_SCL, 0, 5)>;
+            psels = <NRF_PSEL(TWIS_SDA, 0, 26)>,
+                    <NRF_PSEL(TWIS_SCL, 1, 9)>;
             low-power-enable;
         };
     };
 };
 
-/* nice!nano defines i2c1 as nordic,nrf-twi (master). Rebind to TWIS (slave). */
+/* Keep the spare, non-Qwiic I2C peripheral disabled in this mode. */
 &i2c1 {
-    /* Override compatible from nordic,nrf-twi -> nordic,nrf-twis */
-    compatible = "nordic,nrf-twis";
-    status = "okay";
-    pinctrl-0 = <&i2c1_target_default>;
-    pinctrl-1 = <&i2c1_target_sleep>;
-    pinctrl-names = "default", "sleep";
+    status = "disabled";
 };
 
 / {
     aliases {
-        cyberfly-i2c-slave-bus = &i2c1;
+        cyberfly-i2c-slave-bus = &i2c0;
     };
 };
 
@@ -92,20 +73,11 @@
 };
 
 &i2c0 {
-    compatible = "nordic,nrf-twi";
+    compatible = "nordic,nrf-twis";
     status = "okay";
-    pinctrl-0 = <&i2c0_default>;
-    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-0 = <&i2c0_target_default>;
+    pinctrl-1 = <&i2c0_target_sleep>;
     pinctrl-names = "default", "sleep";
-
-    qmi8658a: qmi8658a@6a {
-        compatible = "qst,qmi8658a";
-        reg = <0x6a>;
-        accel-fs = <4>;
-        gyro-fs = <256>;
-        accel-odr = <56>;
-        gyro-odr = <56>;
-    };
 };
 
 &pwm0 {
