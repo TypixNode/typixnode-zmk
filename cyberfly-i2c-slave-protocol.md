@@ -109,39 +109,39 @@ config CYBERFLY_I2C_SLAVE_FIFO_DEPTH
 
 5. **`app/boards/shields/cyberfly_keyboard/boards/nice_nano_nrf52840_zmk.overlay`** — add:
 ```dts
-/* I2C1 as slave: SDA=P0.04, SCL=P0.05 (per debug-io.md) */
+/* I2C0 as slave on the physical Qwiic connector: SDA=P0.26, SCL=P1.09 */
 &pinctrl {
-    i2c1_target_default: i2c1_target_default {
+    i2c0_target_default: i2c0_target_default {
         group1 {
-            psels = <NRF_PSEL(TWIS_SDA, 0, 4)>,
-                    <NRF_PSEL(TWIS_SCL, 0, 5)>;
+            psels = <NRF_PSEL(TWIS_SDA, 0, 26)>,
+                    <NRF_PSEL(TWIS_SCL, 1, 9)>;
         };
     };
 };
 
-&i2c1 {
+&i2c0 {
     compatible = "nordic,nrf-twis";
     status = "okay";
-    pinctrl-0 = <&i2c1_target_default>;
+    pinctrl-0 = <&i2c0_target_default>;
     pinctrl-names = "default";
     address-0 = <0x5F>;  /* overridden by Kconfig at build */
 };
 ```
 
-Notes: I2C0 is already in use for the QMI8658A (SDA=P0.26/SCL=P1.09), so slave lives on I2C1 using the spare `P0.04/P0.05` pair already identified in `debug-io.md`. TWIM and TWIS are different peripherals on nRF52840 — no conflict.
+Notes: the finished keyboard exposes the Qwiic connector on the same pins used by the QMI8658A bus (SDA=P0.26/SCL=P1.09). For Meshtastic/CardKB mode, I2C0 must run as TWIS target and the QMI8658A/air-mouse driver must be disabled. The earlier spare `P0.04/P0.05` target is not reachable from the product's Qwiic connector.
 
 6. **`app/src/CMakeLists.txt`** — conditionally add `i2c_slave*.c` under `if(CONFIG_CYBERFLY_I2C_SLAVE)`.
 
 ### nRF52840 I2C target caveats
 
-- Use `nordic,nrf-twis` (TWIS, hardware target). Supports **one** 7-bit address per peripheral; the two-address support is marketing for I2C1 only — fine.
+- Use `nordic,nrf-twis` (TWIS, hardware target). We only need one 7-bit address (`0x5F`) for CardKB-compatible hosts.
 - TWIS is EasyDMA-driven. Zephyr's `i2c_target` callbacks mask that well — in `read_requested` / `read_processed`, return a single byte per call; Zephyr handles the DMA setup.
 - Clock-stretching: nRF52 TWIS stretches SCL between the register-addr write and the read, so a multi-byte read like "write `0x10`, read 12 bytes" works even if our ISR is slow. Host must tolerate ≤200 µs stretch.
 - Power: TWIS wakes on START, so deep-sleep works. `CONFIG_PM_DEVICE=y` should just work; suspend/resume hooks handled by the Zephyr driver.
 
 ### Open questions / followups
 
-- **Pull-ups**: per existing `debug-io.md`, P0.04/P0.05 have 10K pull-ups DNP by default. If used as slave, the host side must provide them, or we flip them populated. Document this in the shield README.
+- **Pull-ups**: Qwiic/STEMMA QT hosts normally provide SDA/SCL pull-ups. If the host board has them unpopulated or disabled, the bus will not ACK even with the firmware configured correctly.
 - **Matrix size quirk**: CyberFly's 78 keys don't fit in the 48-bit CardKB format. The 12-byte `REG_SCAN` is a superset; an M5 host reading 7 bytes gets keys 0..47 only (rows 0..3 + most of row 4), which is a clean degradation.
 - **Key repeat / hold detection**: reuse the M5UnitUnified approach (threshold-based, done in our I2C layer, not depending on ZMK's own repeat behavior).
 - **I2C address conflicts**: `0x5F` is the same as MPR121 capsense and a few humidity sensors. If the host bus has one, override via Kconfig.
@@ -153,7 +153,7 @@ Implemented and shipping. Full register map live. Files:
 - `app/src/i2c_slave.c` — Zephyr I2C target driver, register file, ASCII + event FIFOs
 - `app/src/i2c_slave_keymap.c` — HID keycode → ASCII (US QWERTY, shift column)
 - `app/src/i2c_slave_listener.c` — ZMK event subscriptions
-- `app/boards/shields/cyberfly_keyboard/boards/nice_nano_nrf52840_zmk.overlay` — rebinds `i2c1` from `nordic,nrf-twi` to `nordic,nrf-twis`, pins SDA=P0.04 / SCL=P0.05, adds `cyberfly-i2c-slave-bus` alias
+- `app/boards/shields/cyberfly_keyboard/boards/nice_nano_nrf52840_zmk.overlay` — rebinds Qwiic `i2c0` from master mode to `nordic,nrf-twis`, pins SDA=P0.26 / SCL=P1.09, adds `cyberfly-i2c-slave-bus` alias
 - `app/boards/shields/cyberfly_keyboard/Kconfig.defconfig` — `CYBERFLY_I2C_SLAVE`, `CYBERFLY_I2C_SLAVE_ADDR` (default `0x5F`), `CYBERFLY_I2C_SLAVE_FIFO_DEPTH` (default 31)
 
 `cyberfly_keyboard.conf` has `CONFIG_CYBERFLY_I2C_SLAVE=y` so every CyberFly firmware from this point on ships with the slave interface enabled. Flash footprint: **34.20 %** (277 KB / 792 KB), RAM **25.50 %** (67 KB / 256 KB).
