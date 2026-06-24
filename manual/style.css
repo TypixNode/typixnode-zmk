@@ -1,0 +1,186 @@
+/* ============================================================
+   TypixNode (CyberFly) — Manual stylesheet (print / WeasyPrint)
+   "cyber" theme: indigo / violet / cyan
+   ============================================================ */
+
+:root {
+  --violet:     #7c5cff;
+  --violet-deep:#5b3edb;
+  --indigo:     #2a1f6b;
+  --cyan:       #22d3ee;
+  --ink:        #1b2030;
+  --muted:      #5d6577;
+  --line:       #e4e3ee;
+  --soft:       #f5f4fb;
+  --accent:     #8b5cf6;     /* Fn / highlight */
+  --cap:        #2c2f36;
+  --cap-edge:   #131419;
+  --cap-text:   #f3f4f6;
+  --cap-dim:    #e7e6ef;
+  --cap-dim-tx: #a8acba;
+  --red:        #ff4d6d;
+  --grn:        #34d399;
+  --blu:        #38bdf8;
+}
+
+@page {
+  size: A4;
+  margin: 16mm 15mm 16mm 15mm;
+  @bottom-center {
+    content: "TypixNode · BLE / USB 双模便携键盘说明书 / Dual-mode Portable Keyboard Manual";
+    font-family: "PingFang SC", "Noto Sans CJK SC", "Helvetica Neue", sans-serif;
+    font-size: 7.5pt; color: #a6a3bd;
+  }
+  @bottom-right { content: counter(page); font-family: "Helvetica Neue", sans-serif; font-size: 8pt; color: #a6a3bd; }
+}
+@page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "PingFang SC", "Noto Sans CJK SC", "Helvetica Neue", "Heiti SC", sans-serif;
+  font-size: 10.2pt; line-height: 1.62; color: var(--ink); margin: 0;
+}
+
+h1, h2, h3, h4 { color: var(--ink); page-break-after: avoid; font-weight: 700; }
+h2 {
+  font-size: 16pt; margin: 1.6em 0 0.5em; padding-bottom: 6px;
+  border-bottom: 2px solid var(--violet); display: flex; align-items: baseline; gap: 10px;
+}
+h2 .num {
+  display: inline-block; background: var(--violet); color: #fff; font-size: 11pt;
+  border-radius: 6px; padding: 1px 9px; font-weight: 700;
+}
+h3 { font-size: 12.5pt; margin: 1.1em 0 0.4em; color: var(--violet-deep); }
+h4 { font-size: 11pt; margin: 0.9em 0 0.3em; }
+p { margin: 0.45em 0; }
+a { color: var(--violet-deep); text-decoration: none; }
+code {
+  font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+  background: #efeafc; color: #5b21b6; padding: 1px 5px; border-radius: 4px; font-size: 8.8pt;
+}
+pre {
+  background: #15131f; color: #ece9f7; padding: 12px 14px; border-radius: 8px;
+  font-size: 8.4pt; line-height: 1.5; page-break-inside: avoid; overflow: hidden;
+}
+pre code { background: none; color: inherit; padding: 0; }
+
+/* ---------- cover ---------- */
+.cover {
+  page: cover; height: 297mm;
+  background: linear-gradient(155deg, #140f33 0%, #2a1f6b 38%, #5b3edb 72%, #18b6d6 100%);
+  color: #fff; padding: 24mm 22mm; position: relative; page-break-after: always;
+}
+.cover .kicker { font-size: 11pt; letter-spacing: 5px; text-transform: uppercase; color: #b9c8ff; font-weight: 600; }
+.cover h1 { color: #fff; font-size: 42pt; line-height: 1.02; margin: 8px 0 4px; letter-spacing: -0.5px; }
+.cover .sub { font-size: 14.5pt; color: #ddd9ff; font-weight: 400; }
+.cover .sub2 { font-size: 11pt; color:#b3bdf2; margin-top: 2px; }
+.cover .hero {
+  margin: 13mm auto 0; width: 152mm; display: block; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.22);
+}
+.cover .specstrip {
+  position: absolute; left: 22mm; right: 22mm; bottom: 20mm;
+  display: flex; border-radius: 12px; overflow: hidden;
+  background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.22);
+}
+.cover .specstrip div { flex: 1; padding: 9px 5px; text-align: center; border-right: 1px solid rgba(255,255,255,0.16); }
+.cover .specstrip div:last-child { border-right: none; }
+.cover .specstrip .k { font-size: 7.3pt; color: #c2cdff; letter-spacing: 1px; }
+.cover .specstrip .v { font-size: 12pt; font-weight: 700; color: #fff; margin-top: 2px; }
+
+/* ---------- lang divider ---------- */
+.langbar {
+  background: var(--indigo); color: #fff; border-radius: 10px; padding: 9px 16px; margin: 0 0 6px;
+  font-size: 12pt; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
+}
+.langbar .tag { background: #fff; color: var(--indigo); border-radius: 5px; font-size: 9pt; padding: 1px 8px; }
+
+.lead { font-size: 10.6pt; color: var(--muted); border-left: 3px solid var(--violet); padding: 4px 0 4px 14px; margin: 8px 0 14px; }
+
+/* ---------- tables ---------- */
+table { border-collapse: collapse; width: 100%; margin: 0.6em 0; font-size: 9.3pt; page-break-inside: avoid; }
+th, td { border: 1px solid var(--line); padding: 5px 9px; text-align: left; vertical-align: top; }
+th { background: var(--soft); font-weight: 700; color: var(--violet-deep); }
+tr:nth-child(even) td { background: #fbfaff; }
+td code { font-size: 8.2pt; }
+
+/* ---------- callout ---------- */
+.note, .tip, .warn, .key-cta {
+  border-radius: 8px; padding: 9px 13px; margin: 10px 0; font-size: 9.4pt;
+  page-break-inside: avoid; border: 1px solid;
+}
+.note { background: #eef3ff; border-color: #cfddfb; color: #243; }
+.tip  { background: #eefcf5; border-color: #bce9d4; color: #06402a; }
+.warn { background: #fff1f4; border-color: #ffccd6; color: #7a1230; }
+.key-cta { background: #f5efff; border-color: #d9c8ff; color: #3b1d7a; }
+
+/* ---------- figure ---------- */
+figure { margin: 12px 0; page-break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; border-radius: 10px; border: 1px solid var(--line); }
+figcaption { font-size: 8.4pt; color: var(--muted); margin-top: 5px; }
+.cols { display: flex; gap: 14px; }
+.cols > * { flex: 1; }
+
+/* ---------- LED dots ---------- */
+.dot { display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:baseline; margin-right:4px; }
+.dot.r{background:var(--red);} .dot.g{background:var(--grn);} .dot.b{background:var(--blu);}
+.dot.w{background:#fff;border:1px solid #ccc;} .dot.rgb{background:linear-gradient(90deg,#ff4d6d 0%,#34d399 50%,#38bdf8 100%);}
+
+/* ============================================================
+   Keycap keymap renderer (dark / cyber)
+   ============================================================ */
+.kbd {
+  background: linear-gradient(160deg,#33363f,#1c1e24);
+  border-radius: 14px; padding: 12px; margin: 10px 0 4px; page-break-inside: avoid;
+  border: 1px solid #0c0d11;
+}
+.krow { display: grid; grid-template-columns: repeat(26, 1fr); gap: 5px; margin-bottom: 5px; }
+.krow:last-child { margin-bottom: 0; }
+
+.key {
+  grid-column: span 2;
+  background: linear-gradient(180deg,#3c4049,#282b31);
+  border: 1px solid var(--cap-edge); border-bottom-width: 2.5px; border-radius: 7px;
+  min-height: 38px; padding: 3px 4px; position: relative; color: var(--cap-text);
+  display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.0;
+}
+.key .main { font-size: 10pt; font-weight: 600; }
+.key .main.sm { font-size: 7.2pt; font-weight: 700; letter-spacing: 0.2px; }
+.key .sub { position: absolute; top: 3px; left: 5px; font-size: 6.6pt; color: #c4c9d2; font-weight: 600; }
+.key .fn { position: absolute; bottom: 2.5px; right: 5px; font-size: 6.0pt; color: #c4b5fd; font-weight: 700; }
+.key .glyph { font-size: 12pt; }
+
+.k15  { grid-column: span 3; }
+.kgap { grid-column: span 2; background: none; border: none; min-height: 0; }
+.kspace { grid-column: span 10; }
+
+/* colored symbol keys */
+.sq{color:#ff5d6c;} .tri{color:#ff9d3d;} .crs{color:#ffd23d;}
+.cir{color:#3ddc7e;} .clb{color:#48c3ff;} .dia{color:#c98cff;}
+.tapd::after { content:"··"; position:absolute; top:1px; right:5px; font-size:8pt; color:#c4b5fd; letter-spacing:-1px; font-weight:700; }
+
+/* fn-layer view */
+.key.dim { background: #dcdbe6; border-color:#c6c5d2; color: var(--cap-dim-tx); }
+.key.dim .main { font-weight: 500; color: var(--cap-dim-tx); }
+.key.dim .sub, .key.dim .fn { display: none; }
+.key.act { background: linear-gradient(180deg,#8b5cf6,#6d33e0); border-color:#4c1fab; }
+.key.act .main { color: #fff; font-weight: 700; }
+.key.act .main.sm { font-size: 7.2pt; }
+.key.act2 { background: linear-gradient(180deg,#22b8d6,#0e8fb0); border-color:#0a6f8a; } /* BLE keys */
+.key.act2 .main { color:#fff; font-weight:700; }
+.key.act2 .main.sm { font-size: 7.2pt; }
+
+.legend-row { display:flex; gap:16px; flex-wrap:wrap; font-size:8.5pt; color:var(--muted); margin:4px 0 0; }
+.legend-row span b { color: var(--accent); }
+.legend-row .c2 { color:#0e8fb0; }
+
+.kv { width:100%; }
+.kv td:first-child { width: 38%; color: var(--violet-deep); font-weight:600; background:#fbfaff; }
+.small { font-size: 8.6pt; color: var(--muted); }
+hr { border: none; border-top: 1px solid var(--line); margin: 14px 0; }
+.pagebreak { page-break-before: always; }
+ul, ol { margin: 0.4em 0; padding-left: 1.3em; }
+li { margin: 0.2em 0; }
+.badge { display:inline-block; padding:1px 7px; border-radius:5px; font-size:8pt; font-weight:700; color:#fff; }
+.badge.usb{background:#0e8fb0;} .badge.ble{background:#8b5cf6;} .badge.air{background:#e0533d;}

@@ -3,8 +3,7 @@ name: Build Manual PDF
 on:
   push:
     paths:
-      - "MANUAL.md"
-      - "images/**"
+      - "manual/**"
       - ".github/workflows/build-manual-pdf.yml"
   workflow_dispatch:
 
@@ -21,36 +20,26 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc fonts-noto-cjk fonts-noto-color-emoji fonts-dejavu-core weasyprint
-          # Install Sarasa Gothic (true CJK monospace with box-drawing alignment)
-          mkdir -p ~/.local/share/fonts
-          curl -sL https://github.com/be5invis/Sarasa-Gothic/releases/download/v1.0.26/SarasaFixed-TTF-1.0.26.7z -o /tmp/sarasa.7z
-          sudo apt-get install -y p7zip-full
-          7z x /tmp/sarasa.7z -o/tmp/sarasa
-          cp /tmp/sarasa/SarasaFixedSC-Regular.ttf ~/.local/share/fonts/
-          cp /tmp/sarasa/SarasaFixedSC-Bold.ttf ~/.local/share/fonts/ 2>/dev/null || true
+          sudo apt-get install -y fonts-noto-cjk fonts-dejavu-core weasyprint python3
           fc-cache -fv
 
-      - name: Convert MD to PDF
+      - name: Build HTML + PDF
+        working-directory: manual
         run: |
-          pandoc MANUAL.md \
-            --from=gfm \
-            --to=html5 \
-            --pdf-engine=weasyprint \
-            --css=.github/manual-style.css \
-            --metadata title="CyberFly 键盘使用说明书" \
-            -o CyberFly_Manual.pdf
+          python3 build_manual.py
+          weasyprint manual.html TypixNode_Manual.pdf
+          cp TypixNode_Manual.pdf ../TypixNode_Manual.pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CyberFly-Manual-PDF
-          path: CyberFly_Manual.pdf
+          name: TypixNode-Manual-PDF
+          path: TypixNode_Manual.pdf
 
       - name: Commit PDF to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f CyberFly_Manual.pdf
-          git diff --cached --quiet || git commit -m "docs: auto-generate Manual PDF [skip ci]"
+          git add -f TypixNode_Manual.pdf manual/TypixNode_Manual.pdf
+          git diff --cached --quiet || git commit -m "docs: auto-generate redesigned Manual PDF [skip ci]"
           git push
