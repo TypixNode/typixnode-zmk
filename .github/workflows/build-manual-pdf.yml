@@ -28,18 +28,17 @@ jobs:
         run: |
           python3 build_manual.py
           weasyprint manual.html TypixNode_Manual.pdf
-          cp TypixNode_Manual.pdf ../TypixNode_Manual.pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: TypixNode-Manual-PDF
-          path: TypixNode_Manual.pdf
+          path: manual/TypixNode_Manual.pdf
 
       - name: Commit PDF to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f TypixNode_Manual.pdf manual/TypixNode_Manual.pdf
+          git add -f manual/TypixNode_Manual.pdf
           git diff --cached --quiet || git commit -m "docs: auto-generate redesigned Manual PDF [skip ci]"
           git push
