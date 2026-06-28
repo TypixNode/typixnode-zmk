@@ -21,3 +21,6 @@ app/.cache/
 
 # build artifacts
 build_reset/
+
+# Personal dev notes (local only)
+CLAUDE.md

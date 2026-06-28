@@ -1,7 +1,7 @@
 if SHIELD_CYBERFLY_KEYBOARD
 
 config ZMK_KEYBOARD_NAME
-    default "CyberFly KBD"
+    default "TypixNode KBD"
 
 config CYBERFLY_RGB_STATUS_LED
     bool "RGB status LED indicator"

@@ -1,4 +1,4 @@
-# CyberFly ZMK - 开发与刷机指南
+# TypixNode ZMK - 开发与刷机指南
 
 ## 环境版本
 
@@ -131,14 +131,14 @@ west build -s app -b nice_nano/nrf52840/zmk -- -DSHIELD=cyberfly
 ## 验证
 
 刷入后:
-- **USB**: 插着 USB 线会被识别为 HID 键盘，设备名 "CyberFly"，厂商 "eggfly"
-- **蓝牙**: 广播名 "CyberFly"，在系统蓝牙设置中搜索配对
+- **USB**: 插着 USB 线会被识别为 HID 键盘，设备名 "TypixNode"，厂商 "TypixNode"
+- **蓝牙**: 广播名 "TypixNode"，在系统蓝牙设置中搜索配对
 
 ## 文件结构
 
 ```
 app/boards/shields/cyberfly/
-├── Kconfig.defconfig        # ZMK 键盘名 "CyberFly"
+├── Kconfig.defconfig        # ZMK 键盘名 "TypixNode"
 ├── Kconfig.shield           # Shield 构建定义
 ├── cyberfly.conf      # 启用 BLE/USB, USB 描述符
 ├── cyberfly.keymap    # 键位映射 (3层: Default, Fn, BT)
@@ -304,7 +304,7 @@ H2 的 GND/LED 是给背光 LED 用的，测试阶段可以不接。
 ### 快速验证
 
 接好线后：
-1. USB 插上开发板，macOS 应识别为 "CyberFly" 键盘
+1. USB 插上开发板，macOS 应识别为 "TypixNode" 键盘
 2. 打开文本编辑器
 3. 用手指同时按矩阵板上的一个按键触点的行和列 (或用镊子短接)
 4. 应该能看到对应字符输出
@@ -449,7 +449,7 @@ nrfjprog --family NRF52 --reset
 
 **根因**: iOS 根据 BLE MAC 地址缓存设备名。即使固件广播新名字，iOS 扫描界面不会更新已知 MAC 的显示名，直到建立一次连接。
 
-**解决**: 直接点击配对/连接，连接成功后 iOS 自动刷新为新名字 "CyberFly"。
+**解决**: 直接点击配对/连接，连接成功后 iOS 自动刷新为新名字 "TypixNode"。
 
 **注意**: 这不是固件问题，是 iOS 系统行为。nRF Connect app 可以看到真实广播名，不受缓存影响。
 
